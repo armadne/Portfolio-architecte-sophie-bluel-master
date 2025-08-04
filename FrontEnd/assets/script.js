@@ -6,10 +6,10 @@ async function chargerTravaux() {
     const reponse = await fetch("http://localhost:5678/api/works");
     const travaux = await reponse.json();
 
-    const galerie = document.querySelector(".gallery");
+    const gallery = document.querySelector(".gallery");
 
     // Optionnel : vider la galerie au cas où
-    galerie.innerHTML = "";
+    gallery.innerHTML = "";
 
     travaux.forEach(travail => {
       const figure = document.createElement("figure");
@@ -23,7 +23,7 @@ async function chargerTravaux() {
 
       figure.appendChild(image);
       figure.appendChild(titre);
-      galerie.appendChild(figure);
+      gallery.appendChild(figure);
     });
   } catch (erreur) {
     console.error("Erreur lors du chargement des travaux :", erreur);
