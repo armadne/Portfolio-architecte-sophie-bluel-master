@@ -3,7 +3,7 @@
 // Variable globale pour stocker tous les travaux une fois récupérés
 let tousLesTravaux = [];
 
-// Fonction qui récupère tous les travaux et les stocke
+// Fonction qui récupère tous les travaux depuis l'api localhost/works et va les afficher sur le site dans "mes projets"
 async function chargerTravaux() {
   try {
     const reponse = await fetch("http://localhost:5678/api/works");
@@ -17,16 +17,17 @@ async function chargerTravaux() {
 // Fonction d'affichage des travaux dans la galerie
 function afficherTravaux(listeTravaux) {
   const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = ""; // On vide la galerie
+  gallery.innerHTML = ""; // Si besoin on vide les balises présents dans la balise div avec la classe galerie
 
+  // Pour chaque projet on va récupérer les titres, images de chaque projet depuis localhost/works pour les afficher sur le site
   listeTravaux.forEach(work => {
-    const figure = document.createElement("figure");
+    const figure = document.createElement("figure"); // creation balise figure (fonctionne comme un container comme div)
 
     const image = document.createElement("img");
     image.src = work.imageUrl;
     image.alt = work.title;
 
-    const titre = document.createElement("figcaption");
+    const titre = document.createElement("figcaption"); // creation d'une légende
     titre.textContent = work.title;
 
     figure.appendChild(image);
@@ -38,13 +39,13 @@ function afficherTravaux(listeTravaux) {
 // Fonction qui affiche les filtres (boutons)
 async function filtres() {
   try {
-    const reponse = await fetch("http://localhost:5678/api/categories");
+    const reponse = await fetch("http://localhost:5678/api/categories"); // Récuperation des noms des catégories depuis loaclhost/categories
     const categories = await reponse.json();
 
-    const filtresContainer = document.querySelector(".filtre");
+    const filtresContainer = document.querySelector(".filtre");  // On sélectionne l’endroit où les boutons de filtre seront affichés
     filtresContainer.innerHTML = "";
 
-    // Bouton "Tous"
+    // Création du Bouton "Tous" pour afficher tous les projets (aucuns filtres appliqués)
     const boutonTous = document.createElement("button");
     boutonTous.textContent = "Tous";
     boutonTous.dataset.id = 0;
@@ -54,11 +55,25 @@ async function filtres() {
     // Boutons de catégories
     categories.forEach(categorie => {
       const bouton = document.createElement("button");
-      bouton.textContent = categorie.name;
-      bouton.dataset.id = categorie.id;
+      bouton.textContent = categorie.name; // On crée un bouton avec le nom de la catégorie.
+      bouton.dataset.id = categorie.id; // Quand on clique dessus, on recharge les projets en filtrant par l’id de cette catégorie.
       bouton.classList.add("filtre-btn");
       filtresContainer.appendChild(bouton);
     });
+
+    // Pour chaque catégorie, on crée un bouton avec son nom.
+//Chaque bouton reçoit une classe CSS "button".
+// Lorsqu'on clique sur un bouton, la fonction chargerTravaux(id) est appelée, avec l'id de la catégorie.
+// Cette fonction filtre les projets pour n’afficher que ceux qui ont une propriété categoryId correspondant à l’id de la catégorie sélectionnée.
+// Lorsqu’on clique sur un bouton, la fonction `chargerTravaux(id)` est appelée avec l’id de la catégorie (ex: 1 pour “Objets”).
+// Cette fonction :
+// efface les projets déjà visibles dans la galerie,
+// sélectionne uniquement ceux qui ont `categoryId === id`, (exemple categorie "Objets" donc id = 1)
+//  puis affiche ces projets (avec leur image et titre) dans la galerie. (donc affiche tous les projets qui ont comme id= 1)
+// *Chaque projet possède une image, un titre et un identifiant de catégorie.
+
+
+
 
     // Gestion des clics
     const boutons = document.querySelectorAll(".filtre-btn");
