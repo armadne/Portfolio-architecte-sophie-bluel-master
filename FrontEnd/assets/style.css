@@ -32,17 +32,42 @@ body {
 	line-height: 1;
 }
 
-.filtre-btn {
-  padding: 8px 15px;
-  margin: 5px;
-  border: 1px solid #333;
-  background-color: white;
-  cursor: pointer;
+
+
+.filtre {
+  display: flex;
+  gap: 1rem;
+  margin: 3.5rem 15rem;
+ 
 }
 
-.filtre-btn.actif {
-  background-color: #333;
+
+/* Style général pour tous les boutons filtres */
+.filtre-btn {
+  border: 2px solid #1d6154; /* vert foncé */
+  color: #1d6154;
+  border-radius: 60px;
+  background-color: transparent;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px; /* donne un effet "pill" arrondi */
+  font-size: 1rem;
+  font-family: 'Syne';
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Style au survol */
+.filtre-btn:hover {
+  background-color: #1d6154;
   color: white;
+}
+
+/* Style du bouton actif */
+.filtre-btn.actif {
+  background-color: #1d6154;
+  color: white;
+  border-color: #1d6154;
 }
 
 ol, ul {
