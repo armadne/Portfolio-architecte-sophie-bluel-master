@@ -61,24 +61,20 @@ async function filtres() {
       filtresContainer.appendChild(bouton);
     });
 
-    // Pour chaque catégorie, on crée un bouton avec son nom.
-//Chaque bouton reçoit une classe CSS "button".
-// Lorsqu'on clique sur un bouton, la fonction chargerTravaux(id) est appelée, avec l'id de la catégorie.
-// Cette fonction filtre les projets pour n’afficher que ceux qui ont une propriété categoryId correspondant à l’id de la catégorie sélectionnée.
-// Lorsqu’on clique sur un bouton, la fonction `chargerTravaux(id)` est appelée avec l’id de la catégorie (ex: 1 pour “Objets”).
-// Cette fonction :
-// efface les projets déjà visibles dans la galerie,
-// sélectionne uniquement ceux qui ont `categoryId === id`, (exemple categorie "Objets" donc id = 1)
-//  puis affiche ces projets (avec leur image et titre) dans la galerie. (donc affiche tous les projets qui ont comme id= 1)
-// *Chaque projet possède une image, un titre et un identifiant de catégorie.
+//Cette partie (ci dessus) sert à afficher les boutons de filtre dans le HTML.
+//Chaque bouton correspond à une catégorie (ex : Objets, Appartements, Hôtels).
+//On leur associe un identifiant (dataset.id) qui sera utilisé plus tard pour filtrer.
+// Sa ne filtre rien pour le moment
 
 
 
 
-    // Gestion des clics
+
+
+    // Gestion des clics et pièce centrale qui fait le lien entre les boutons créés dynamiquement et les fonctions de filtrage.
     const boutons = document.querySelectorAll(".filtre-btn"); // On récupère tous les boutons avec la classe "filtre-btn"
     boutons.forEach(bouton => {
-      bouton.addEventListener("click", () => {
+      bouton.addEventListener("click", () => { 
         const idCategorie = parseInt(bouton.dataset.id); // récupère l’id de la catégorie depuis un data-id (ex : <button data-id="1">Objets</button>)
         filtrerTravaux(idCategorie); //afficher les projets qui correspondent à la catégorie (exemple categorie: objets)
         activerBouton(bouton); // mettre en surbrillance le bouton cliqué
@@ -89,6 +85,9 @@ async function filtres() {
     console.error("Erreur lors du chargement des filtres :", erreur);
   }
 }
+
+
+
 
 // Fonction qui filtre les travaux selon la catégorie cliquée
 function filtrerTravaux(idCategorie) { 
@@ -101,6 +100,12 @@ function filtrerTravaux(idCategorie) {
     afficherTravaux(travauxFiltres); // Afficher les projets filtrés
   }
 }
+
+//Cette fonction "filtrerTravaux" est appelée quand un bouton est cliqué.
+//Elle prend l’id de la catégorie du bouton cliqué et :
+//soit affiche tous les projets si idCategorie === 0 (souvent "Tous"), soit affiche uniquement les projets de cette catégorie.
+
+
 
 // Fonction pour gérer l'apparence du bouton actif
 function activerBouton(boutonActif) {
