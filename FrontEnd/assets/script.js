@@ -1,56 +1,57 @@
 // script.js
 
-// Fonction qui va chercher les travaux depuis l'API et les injecte dans la galerie
+// Variable globale pour stocker tous les travaux une fois récupérés
+let tousLesTravaux = [];
+
+// Fonction qui récupère tous les travaux et les stocke
 async function chargerTravaux() {
   try {
     const reponse = await fetch("http://localhost:5678/api/works");
-    const works = await reponse.json();
-
-    const gallery = document.querySelector(".gallery");
-
-    // Optionnel : vider la galerie au cas où
-    gallery.innerHTML = "";
-
-    works.forEach(work => {    // Pour chaque projet : afficher image , titre etc...
-      const figure = document.createElement("figure");
-
-      const image = document.createElement("img");
-      image.src = work.imageUrl;
-      image.alt = work.title;
-
-      const titre = document.createElement("figcaption");
-      titre.textContent = work.title;
-
-      figure.appendChild(image);
-      figure.appendChild(titre);
-      gallery.appendChild(figure);
-    });
+    tousLesTravaux = await reponse.json(); // On stocke les travaux pour les réutiliser plus tard
+    afficherTravaux(tousLesTravaux); // On affiche tout au début
   } catch (erreur) {
     console.error("Erreur lors du chargement des travaux :", erreur);
   }
 }
 
-// Lancer la fonction quand le DOM est chargé
-document.addEventListener("DOMContentLoaded", chargerTravaux);
+// Fonction d'affichage des travaux dans la galerie
+function afficherTravaux(listeTravaux) {
+  const gallery = document.querySelector(".gallery");
+  gallery.innerHTML = ""; // On vide la galerie
 
+  listeTravaux.forEach(work => {
+    const figure = document.createElement("figure");
+
+    const image = document.createElement("img");
+    image.src = work.imageUrl;
+    image.alt = work.title;
+
+    const titre = document.createElement("figcaption");
+    titre.textContent = work.title;
+
+    figure.appendChild(image);
+    figure.appendChild(titre);
+    gallery.appendChild(figure);
+  });
+}
+
+// Fonction qui affiche les filtres (boutons)
 async function filtres() {
   try {
     const reponse = await fetch("http://localhost:5678/api/categories");
     const categories = await reponse.json();
 
     const filtresContainer = document.querySelector(".filtre");
-
-    // Vider le conteneur des filtres
     filtresContainer.innerHTML = "";
 
-    // Créer le bouton "Tous"
+    // Bouton "Tous"
     const boutonTous = document.createElement("button");
     boutonTous.textContent = "Tous";
     boutonTous.dataset.id = 0;
     boutonTous.classList.add("filtre-btn");
     filtresContainer.appendChild(boutonTous);
 
-    // Créer un bouton pour chaque catégorie
+    // Boutons de catégories
     categories.forEach(categorie => {
       const bouton = document.createElement("button");
       bouton.textContent = categorie.name;
@@ -59,12 +60,13 @@ async function filtres() {
       filtresContainer.appendChild(bouton);
     });
 
-    // Ajouter les écouteurs d'événements à tous les boutons
+    // Gestion des clics
     const boutons = document.querySelectorAll(".filtre-btn");
     boutons.forEach(bouton => {
       bouton.addEventListener("click", () => {
         const idCategorie = parseInt(bouton.dataset.id);
         filtrerTravaux(idCategorie);
+        activerBouton(bouton);
       });
     });
 
@@ -73,11 +75,27 @@ async function filtres() {
   }
 }
 
-// À appeler après le chargement de la page
-filtres();
-
-// Fonction de filtrage (à adapter selon ta logique)
+// Fonction qui filtre les travaux selon la catégorie cliquée
 function filtrerTravaux(idCategorie) {
-  console.log(`Filtrage des travaux pour la catégorie : ${idCategorie}`);
-  // Ici tu dois implémenter l'affichage des travaux filtrés dans .gallery
+  if (idCategorie === 0) {
+    afficherTravaux(tousLesTravaux); // Afficher tous les projets
+  } else {
+    const travauxFiltres = tousLesTravaux.filter(
+      work => work.categoryId === idCategorie
+    );
+    afficherTravaux(travauxFiltres); // Afficher les projets filtrés
+  }
 }
+
+// Fonction pour gérer l'apparence du bouton actif
+function activerBouton(boutonActif) {
+  const boutons = document.querySelectorAll(".filtre-btn");
+  boutons.forEach(b => b.classList.remove("actif")); // Supprimer la classe active
+  boutonActif.classList.add("actif"); // Ajouter la classe active
+}
+
+// Quand le DOM est prêt, on charge tout
+document.addEventListener("DOMContentLoaded", () => {
+  chargerTravaux();
+  filtres();
+});

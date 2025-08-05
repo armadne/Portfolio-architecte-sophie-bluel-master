@@ -31,6 +31,20 @@ footer, header, hgroup, menu, nav, section {
 body {
 	line-height: 1;
 }
+
+.filtre-btn {
+  padding: 8px 15px;
+  margin: 5px;
+  border: 1px solid #333;
+  background-color: white;
+  cursor: pointer;
+}
+
+.filtre-btn.actif {
+  background-color: #333;
+  color: white;
+}
+
 ol, ul {
 	list-style: none;
 }
