@@ -76,12 +76,12 @@ async function filtres() {
 
 
     // Gestion des clics
-    const boutons = document.querySelectorAll(".filtre-btn");
+    const boutons = document.querySelectorAll(".filtre-btn"); // On récupère tous les boutons avec la classe "filtre-btn"
     boutons.forEach(bouton => {
       bouton.addEventListener("click", () => {
-        const idCategorie = parseInt(bouton.dataset.id);
-        filtrerTravaux(idCategorie);
-        activerBouton(bouton);
+        const idCategorie = parseInt(bouton.dataset.id); // récupère l’id de la catégorie depuis un data-id (ex : <button data-id="1">Objets</button>)
+        filtrerTravaux(idCategorie); //afficher les projets qui correspondent à la catégorie (exemple categorie: objets)
+        activerBouton(bouton); // mettre en surbrillance le bouton cliqué
       });
     });
 
@@ -91,7 +91,7 @@ async function filtres() {
 }
 
 // Fonction qui filtre les travaux selon la catégorie cliquée
-function filtrerTravaux(idCategorie) {
+function filtrerTravaux(idCategorie) { 
   if (idCategorie === 0) {
     afficherTravaux(tousLesTravaux); // Afficher tous les projets
   } else {
@@ -105,12 +105,14 @@ function filtrerTravaux(idCategorie) {
 // Fonction pour gérer l'apparence du bouton actif
 function activerBouton(boutonActif) {
   const boutons = document.querySelectorAll(".filtre-btn");
-  boutons.forEach(b => b.classList.remove("actif")); // Supprimer la classe active
-  boutonActif.classList.add("actif"); // Ajouter la classe active
+  boutons.forEach(b => b.classList.remove("actif")); //  On enlève la classe CSS "actif" à tous les boutons pour que un seul puisse être actif à la fois.
+  boutonActif.classList.add("actif"); // On ajoute la classe "actif" au bouton qui a été cliqué.
+  // lors du clique sur le bouton , le bouton devient actif avec un changement de couleur
 }
 
 // Quand le DOM est prêt, on charge tout
+// Après que tous le code HTML soit chargé
 document.addEventListener("DOMContentLoaded", () => {
-  chargerTravaux();
-  filtres();
+  chargerTravaux(); // Affiche dynamiquement via "fetch" les projets
+  filtres(); // Affiche dynamiquement via "fetch" les filtres sous forme de boutons
 });
