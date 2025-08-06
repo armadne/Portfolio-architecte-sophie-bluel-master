@@ -36,6 +36,9 @@ function afficherTravaux(listeTravaux) {
   });
 }
 
+
+
+
 // Fonction qui affiche les filtres (boutons)
 async function filtres() {
   try {
@@ -89,6 +92,7 @@ async function filtres() {
 
 
 
+
 // Fonction qui filtre les travaux selon la catégorie cliquée
 function filtrerTravaux(idCategorie) { 
   if (idCategorie === 0) {
@@ -122,20 +126,23 @@ function afficherFormulaireConnexion() {
   const main = document.querySelector("main");
   main.innerHTML = `
     <section class="login-section">
-      <h2>Connexion</h2>
-      <form id="login-form">
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
+      <h2 class="login-title">Log In</h2>
+      <form id="login-form" class="login-form">
+        <label for="email" class="login-label">E-mail</label>
+        <input type="email" id="email" class="login-input" required />
 
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" required />
+        <label for="password" class="login-label">Mot de passe</label>
+        <input type="password" id="password" class="login-input" required />
 
-        <button type="submit">Se connecter</button>
-        <p id="login-error" style="color: red; display: none;">Email ou mot de passe incorrect.</p>
+        <button type="submit" class="login-button">Se connecter</button>
+
+        <p id="login-error" class="login-error">Email ou mot de passe incorrect.</p>
+        <a href="#" class="login-link">Mot de passe oublié</a>
       </form>
     </section>
   `;
 
+  // Gestion du formulaire
   const form = document.getElementById("login-form");
 
   form.addEventListener("submit", async (e) => {
@@ -157,7 +164,7 @@ function afficherFormulaireConnexion() {
         const data = await response.json();
         localStorage.setItem("token", data.token);
         alert("Connexion réussie !");
-        window.location.href = "index.html"; // Redirection
+        window.location.href = "index.html"; // Redirige vers la page d'accueil
       } else {
         document.getElementById("login-error").style.display = "block";
       }
@@ -166,8 +173,6 @@ function afficherFormulaireConnexion() {
     }
   });
 }
-
-
 
 
 
@@ -183,6 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gestion du bouton "login"
   const loginLink = document.getElementById("login-link");
-  if (loginLink) {
+  if (loginLink) { // Lorsqu'on clique sur "login" dans le menu de navigation on affiche la page de connexion
     loginLink.addEventListener("click", afficherFormulaireConnexion);
   }
