@@ -115,9 +115,74 @@ function activerBouton(boutonActif) {
   // lors du clique sur le bouton , le bouton devient actif avec un changement de couleur
 }
 
+
+
+// === Affiche dynamiquement le formulaire de connexion ===
+function afficherFormulaireConnexion() {
+  const main = document.querySelector("main");
+  main.innerHTML = `
+    <section class="login-section">
+      <h2>Connexion</h2>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required />
+
+        <button type="submit">Se connecter</button>
+        <p id="login-error" style="color: red; display: none;">Email ou mot de passe incorrect.</p>
+      </form>
+    </section>
+  `;
+
+  const form = document.getElementById("login-form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    try {
+      const response = await fetch("http://localhost:5678/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        alert("Connexion réussie !");
+        window.location.href = "index.html"; // Redirection
+      } else {
+        document.getElementById("login-error").style.display = "block";
+      }
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+    }
+  });
+}
+
+
+
+
+
+
 // Quand le DOM est prêt, on charge tout
 // Après que tous le code HTML soit chargé
 document.addEventListener("DOMContentLoaded", () => {
   chargerTravaux(); // Affiche dynamiquement via "fetch" les projets
   filtres(); // Affiche dynamiquement via "fetch" les filtres sous forme de boutons
+  
 });
+
+
+  // Gestion du bouton "login"
+  const loginLink = document.getElementById("login-link");
+  if (loginLink) {
+    loginLink.addEventListener("click", afficherFormulaireConnexion);
+  }
