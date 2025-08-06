@@ -233,9 +233,7 @@ input[type="submit"]{
   max-width: 400px;
   margin: 100px auto;
   padding: 40px;
-background-color: #FFFEF8;
-  /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;*/
+  background-color: #FFFEF8;
   font-family: 'Work Sans', sans-serif;
 }
 
@@ -334,7 +332,7 @@ footer {
 
 /* Contenu centré à l'intérieur du footer */
 footer nav {
-  max-width: 1040px;
+  max-width: 1340px;
   margin: auto;
 }
 
@@ -345,5 +343,15 @@ footer nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-weight: none;
+}
+
+footer nav ul li
+
+{
+	font-family: Work Sans;
+font-weight:lighter;
+padding: 0;
+font-size: 18px;
+
+
 }
