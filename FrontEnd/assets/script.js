@@ -191,3 +191,34 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginLink) { // Lorsqu'on clique sur "login" dans le menu de navigation on affiche la page de connexion
     loginLink.addEventListener("click", afficherFormulaireConnexion);
   }
+
+
+
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+  chargerTravaux();
+  filtres();
+
+  const token = localStorage.getItem("token");
+
+  // Afficher le bouton "modifier" si connecté
+  const editBtn = document.getElementById("edit-btn");
+  if (token && editBtn) {
+    editBtn.style.display = "inline-flex"; // ou "inline-block" selon ton style
+  }
+
+  // Gestion du lien login/logout
+  const loginLink = document.getElementById("login-link");
+  if (loginLink) {
+    if (token) {
+      loginLink.textContent = "logout";
+      loginLink.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        window.location.reload();
+      });
+    } else {
+      loginLink.addEventListener("click", afficherFormulaireConnexion);
+    }
+  }
+});
