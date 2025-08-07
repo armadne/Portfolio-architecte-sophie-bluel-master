@@ -175,6 +175,39 @@ function afficherFormulaireConnexion() {
 }
 
 
+// Fonction pour afficher les travaux dans la modale
+async function fetchWorksAndDisplayInModal() {
+  try {
+    const response = await fetch("http://localhost:5678/api/works");
+    const travaux = await response.json();
+
+    const modalGallery = document.getElementById("modal-gallery");
+    modalGallery.innerHTML = ""; // On vide avant de remplir
+
+    travaux.forEach(work => {
+      const figure = document.createElement("figure");
+      figure.classList.add("modal-figure");
+
+      const img = document.createElement("img");
+      img.src = work.imageUrl;
+      img.alt = work.title;
+      img.classList.add("modal-img");
+
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon");
+      deleteIcon.setAttribute("data-id", work.id);
+
+      figure.appendChild(img);
+      figure.appendChild(deleteIcon);
+      modalGallery.appendChild(figure);
+    });
+
+  } catch (error) {
+    console.error("Erreur lors de l'affichage des travaux dans la modale :", error);
+  }
+}
+
+
 
 
 // Quand le DOM est prêt, on charge tout
@@ -220,5 +253,24 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       loginLink.addEventListener("click", afficherFormulaireConnexion);
     }
+  }
+});
+
+// Ouverture
+document.getElementById("open-modal").addEventListener("click", () => {
+  document.getElementById("modal").classList.remove("hidden");
+  fetchWorksAndDisplayInModal();
+});
+
+// Fermeture via la croix
+document.getElementById("close-modal").addEventListener("click", () => {
+  document.getElementById("modal").classList.add("hidden");
+});
+
+// Fermeture en cliquant en dehors
+document.getElementById("modal").addEventListener("click", (event) => {
+  const modalContent = document.querySelector(".modal-content");
+  if (!modalContent.contains(event.target)) {
+    document.getElementById("modal").classList.add("hidden");
   }
 });

@@ -43,9 +43,11 @@
 
 		<div class="mes-projets-header">
   <h2>Mes Projets</h2>
-  <span id="edit-btn" >
-    <i class="fa-solid fa-pen-to-square"></i> <a href="/edit-projets" style="text-decoration: none; color: #000;">modifier</a>
-  </span>
+<span id="edit-btn">
+  <i class="fa-solid fa-pen-to-square"></i> 
+  <a id="open-modal" style="text-decoration: none; color: #000; cursor: pointer;">modifier</a>
+</span>
+
 </div>
 
 
@@ -80,7 +82,20 @@
 		</ul>
 	</nav>
 </footer>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="close-modal" class="close">&times;</span>
+    <h2>Galerie photo</h2>
+    <div id="modal-gallery" class="modal-gallery"></div>
+  </div>
+</div>
+
+
+
  <script src="assets/script.js"></script>
+
+
  
 </body>
 
