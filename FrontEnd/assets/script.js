@@ -175,6 +175,9 @@ function afficherFormulaireConnexion() {
 }
 
 
+
+
+
 // Fonction pour afficher les travaux dans la modale
 async function fetchWorksAndDisplayInModal() {
   try {
