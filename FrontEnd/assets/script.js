@@ -277,3 +277,42 @@ document.getElementById("modal").addEventListener("click", (event) => {
     document.getElementById("modal").classList.add("hidden");
   }
 });
+
+
+
+// Sélection des éléments
+const addPhotoBtn = document.getElementById("add-photo-btn");
+const modalViewGallery = document.getElementById("modal-view-gallery");
+const modalViewAdd = document.getElementById("modal-view-add");
+const backToGalleryBtn = document.getElementById("back-to-gallery");
+const closeModal = document.getElementById("close-modal");
+const modal = document.getElementById("modal");
+
+// Ouvrir la vue "Ajout photo"
+addPhotoBtn.addEventListener("click", () => {
+  modalViewGallery.classList.add("hidden");
+  modalViewAdd.classList.remove("hidden");
+});
+
+// Retour à la vue galerie
+backToGalleryBtn.addEventListener("click", () => {
+  modalViewAdd.classList.add("hidden");
+  modalViewGallery.classList.remove("hidden");
+});
+
+// Fermer la modale
+closeModal.addEventListener("click", () => {
+  modal.classList.add("hidden");
+  // Toujours revenir à la vue galerie par défaut
+  modalViewAdd.classList.add("hidden");
+  modalViewGallery.classList.remove("hidden");
+});
+
+// Fermer si clic en dehors du contenu
+window.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.classList.add("hidden");
+    modalViewAdd.classList.add("hidden");
+    modalViewGallery.classList.remove("hidden");
+  }
+});

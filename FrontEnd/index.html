@@ -82,16 +82,52 @@
 		</ul>
 	</nav>
 </footer>
-
+<!-- Modale unique -->
 <div id="modal" class="modal hidden">
   <div class="modal-content">
     <span id="close-modal" class="close">&times;</span>
-    <h2>Galerie photo</h2>
-    <div id="modal-gallery" class="modal-gallery"></div>
-	<hr class="modal-separator">
-	<div class="modal-footer">
-		<button id="add-photo-btn">Ajouter une photo</button>
-	</div>
+
+    <!-- Vue Galerie -->
+    <div id="modal-view-gallery">
+      <h2>Galerie photo</h2>
+      <div id="modal-gallery" class="modal-gallery"></div>
+      <hr class="modal-separator">
+      <div class="modal-footer">
+        <button id="add-photo-btn">Ajouter une photo</button>
+      </div>
+    </div>
+
+    <!-- Vue Ajout Photo -->
+    <div id="modal-view-add" class="hidden">
+      <h2>Ajout photo</h2>
+
+      <!-- Zone upload -->
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="photo-input" accept="image/jpeg, image/png" hidden>
+        <label for="photo-input" class="upload-label">+ Ajouter photo</label>
+        <p class="upload-info">jpg, png : 4mo max</p>
+        <img id="photo-preview" class="hidden" alt="Aperçu photo">
+      </div>
+
+      <!-- Formulaire -->
+      <form id="add-photo-form">
+        <label for="titre">Titre</label>
+        <input type="text" id="titre" name="titre" required>
+
+        <label for="categorie">Catégorie</label>
+        <select id="categorie" name="categorie" required>
+          <option value="">-- Sélectionner --</option>
+          <option value="1">Catégorie 1</option>
+          <option value="2">Catégorie 2</option>
+        </select>
+
+        <div class="modal-footer">
+          <button type="button" id="back-to-gallery">← Retour</button>
+          <button type="submit" id="valider-btn" disabled>Valider</button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
 

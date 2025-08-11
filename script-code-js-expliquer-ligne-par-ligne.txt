@@ -1,0 +1,245 @@
+let tousLesTravaux = []; // Création d'un tableau (array) pour stocker tous les travaux avec leurs images, title, id etc.. respectifs  
+
+
+// FONCTION QUI PERMET DE RECUPERER (DYNAMIQUEMENT VIA JAVASCRIPT) LES TRAVAUX DEPUIS API BACKEND localhost/api/works
+async function chargerTravaux() { // Création de fonction asynchrone qui permet de faire plusieurs actions a la fois par exemple executer un code apres avoir recuperer les données du backend localhost/api/works
+    try{
+        const response = await fetch("http://localhost:5678/api/works")  // Ici avec fetch on récupère les données du backend localhost/api/works qui contient tous les travaux avec images, title etc. 
+        tousLesTravaux = await response.json() // on récupère les données en format json exemple : {"exemple" : 1, "exemple2" : "test"}
+        afficherTravaux(tousLesTravaux); // Et on affiche tous les travaux
+
+    }catch (error) { // // SI TOUS LE CODE PRECEDENT N'A PAS FONCTIONNER ON AFFICHE LE MESSAGE ERREUR CI-DESSOUS, afficher message erreur "Erreur lors du chargement des travaux"
+        console.error("Erreur lors du chargement des travaux")
+    }
+}
+
+// FONCTION AFFICHER LES TRAVAUX DYNAMIQUEMENT VIA DU JAVASCRIPT
+function afficherTravaux(listeTravaux) {  // listeTravaux représente une variable locale dans laquelle il y a tous les travaux
+    const gallery = document.querySelector(".gallery"); // ici on selectionne la classe dans le html par exemple balise div class="gallery"
+    gallery.innerHTML = ""; // on vide le contenu de la balise div class="gallery" dans le but d'afficher dynamiquement le code html via le code javascript
+
+    listeTravaux.forEach(work => { // On fait une boucle "for" pour afficher le contenu dynamiquement 
+        const figure = document.createElement("figure"); // création balise html figure
+        const image = document.createElement("img"); // création balise html "img"
+
+        image.src = work.imageUrl; // Pour afficher l'image on a besoin de l'url de l'image (src="url_image") du coup on recupère l'url depuis l'api backend localhost/api/works, exemple : http://localhost:5678/images/appartement-paris-v1651287270508.png
+        image.alt = work.title; // Pour le "alt" ou cas ou l'image ne s'affiche pas, on affiche le titre de l'image exemple : "Appartement Paris V"  on le récupèrev aussi depuis le backend localhost/api/works
+
+        const titre = document.createElement("figcaption"); // Création balise html figcaption
+        titre.textContent = work.title; // pour le titre du travail on le récupère aussi via l'api backend localhost/api/works exemple : "Appartement Paris V"
+
+        figure.appendChild(image) // Ajout et affiche les images
+        figure.appendChild(titre) // Ajout et affiche les titres de chaque projet (affiche titre juste en dessous de chaque image)
+        gallery.appendChild(figure) // ajout de la balise figure qui fonctionne comme un "container" dans lequel on mets les titres et images de chaque projet
+
+    })
+}
+
+// FONCTION POUR AFFICHER LES FILTRES
+async function filtres() {
+    try {
+        const response = await fetch("http://localhost:5678/api/categories") // Récupération des noms des catégories depuis localhost/api/categories
+        const categories = await response.json(); // Récupération des noms de catégories en format json (exemple: {"exemple": 1, "test": "ok"})
+
+        const filtresContainer = document.querySelector(".filtres"); // ICI on sélectionne la balise avec la classe "filtres"
+        filtresContainer.innerHTML = ""; // dans la balise html qui a la classe "filtres" on vide son contenu dans le cas ou il y a déja des balises html on va les enlever dans le but d'afficher dynamiquement le HTML via du javascript 
+
+        const boutonTous = document.createElement("button"); // Création de la balise button
+        boutonTous.textContent = "Tous"; // la balise buuton aura comme nom "Tous"
+        boutonTous.dataset.id = 0; // Le bouton "Tous" aura comme ID : 0 (COMME INDIQUER DANS l'API backend localhost/api/categories pour chaque catégorie il y a une id )
+        boutonTous.classList.add("fitre-btn"); // POUR LE BOUTON "TOUS" BALISES HTML <button> créer une classe "filtre-btn"
+        filtresContainer.appendChild(boutonTous); // Ajout et affichage du bouton "Tous"
+
+        categories.forEach(categorie => { // Ici on fait une boucle "for" pour créer d'autres boutons qui permettront de filtrer les projets afficher
+            const bouton = document.createElement("button"); // Création de balises button
+            bouton.textContent = categorie.name; // Pour chaque button on donne un nom de catégorie qu'on aura récupérer depuis localhost/api/categories
+            bouton.dataset.id = categorie.id; // Pour chaque boutons on affecte une id catégorie (récupération depuis aussi localhost/api/categories par exemple: bouton "Tous" categorie_id = 0, bouton "Objet" categorie_id = 1, bouton "Appartements" categorie_id = 2  etc..)
+            bouton.classList.add("filtre-btn"); // Pour chaque balise HTML button (Objets, Appartements, Hotels & Restaurants on va leur attribuer une classe "filtre-btn" )
+            filtresContainer.appendChild(bouton); // Ajout et affichage des boutons Objets, Appartements, Hotels & Restaurants
+
+        });
+
+
+        const boutons = document.querySelectorAll(".filtre-btn") // Ici on sélectionne tous les balises button qui ont commes classes "filtre-btn" donc on sélectionne les boutons: Tous,Objets, Appartements, Hotels & Restaurants
+        boutons.forEach(bouton => { // Ici on fait une boucle for sur tous les boutons
+            bouton.addEventListener("click", () => { // Lors du clique sur le bouton
+                const idCategorie = parseInt(bouton.dataset.id); //  Chaque bouton est lié a sa categorie id , exemple bouton Objet lié a categorie id : 1 , bouton Apparatement lié a categorie id : 2 etc...  
+                filtrerTravaux(idCategorie); // Afficher les travaux selon le bouton cliquer (par exemple : on clque sur le bouton Objet qui a comme categorie id : 1 du coup il faudra afficher tous les travaux qui ont comme categorie id : 1 , donc afficher que des objets )
+                activerBouton(bouton); //changer le style du bouton actif ou marquer visuellement quel filtre est en cours  (changement de couleur lorsqu'on selectionne le bouton)
+            });
+        });
+    } catch (erreur) { // SI TOUS LE CODE PRECEDENT N'A PAS FONCTIONNER ON AFFICHE LE MESSAGE ERREUR CI-DESSOUS
+        console.error("Erreur lors du chargement des filtres: ", erreur);
+    }
+}
+
+
+// FONCTION POUR FILTRER LES TRAVAUX
+function filtrerTravaux(idCategorie) {
+    if(idCategorie === 0) { // SI LA CATEGORIE EST UN ID DE 0 ALORS SA VEUT DIRE QUE LE BOUTON "TOUS" EST SELECTIONNER DU COUP AFFICHER TOUS LES TRAVAUX (SANS FILTRES)
+        afficherTravaux(tousLesTravaux) // AFFICHER TOUS LES TRAVAUX
+    } else { // SINON
+        const travauxFiltres = tousLesTravaux.filter( // AFFICHER LES TRAVAUX SELON LA CATEGORIE SELECTIONNER , CHAQUE TRAVAIL A UNE ID LIER A SA CATEGORIE , PAR EXEMPLE SI LE PROJET AVEC IMAGE D'UN OBJET A UNE CATEGORIE ID 1 ALORS LORSQUE QU'ON CLIQUERA SUR LA CATEGORIE "OBJETS" (QUI COMME ID 2) LES TRAVAUX OBJETS S'AFFICHERONT
+            work => work.categoryId === idCategorie
+        );
+        afficherTravaux(travauxFiltres); // AFFICHER LES TRAVAUX SELON LA CATEGORIE SELECTIONNER
+    }
+}
+
+
+// LORSQUE ON CLIQUE SUR LE BOUTON CHANGER SON APPARENCE POUR QU'ON PUISSE VOIR VISUELLEMENT QUEL BOUTON A ETE SELECTIONNER
+function activerBouton(boutonActif) {
+    const boutons = document.querySelectorAll(".filter-btn"); // SELECTIONNE TOUS LES BOUTONS-CATEGORIE
+    boutons.forEach(b => b.classList.remove("actif")); // SI UN BOUTON EST CLIQUER ON CHANGE SON APPARENCE (ACTIF) ET LES AUTRES SONT (INACTIF: PAS DE CHANGEMENTS D'APPARENCE) 
+    boutonActif.classList.add("actif"); // BOUTON CLIQUER = CHANGEMEENT APPARENCE DU BOUTON EXEMPLE LA COULEUR DONC BOUTON ACTIF
+}
+
+
+
+// FUNCTION AFFICHER LE FORMULAIRE DE CONNEXION
+function afficherFormulaireConnexion() {
+    const main = document.querySelector("main"); // SELECTIONNER LA BALISE HTML MAIN (PAS DE "." DEVANT "main" donc ce n'est pas une classe mais une balise HTML)
+    // DANS LA BALISE HTML "main" AJOUTER LE CODE HTML SUIVANT
+    main.innerHTML = `  
+    <section class="login-section">
+      <h2 class="login-title">Log In</h2>
+      <form id="login-form" class="login-form">
+         <label for="email" class="login-label">E-mail</label>
+         <input type="email" id="email" class="login-input" required />
+      
+         <label for="password" class="login-label>Mot de passe</label>
+         <input type="password" id="password" class="login-input" required />
+
+         <button type="submit" class="login-button">Se connecter</button>
+
+         <p id="login-error" class="login-error">Email ou mot de passe incorrect</p>
+         <a href="#" class="login-link"> Mot de passe oublié</a>
+
+      </form>
+    </section>
+    `;
+}
+
+
+const form = document.getElementById("login-form"); // SELECTIONNER LA BALISE AVEC LA CLASSE "login-form"
+
+form.addEventListener("submit", async (e) => {  // GESTION DU BOUTON SUMBMIT DANS LE FORMULAIRE DE CONNEXION
+    e.preventDefault(); // empêche le formulaire d’envoyer automatiquement la page vers le serveur (et donc de recharger la page). Sans ça, ton JS n’aurait pas le temps d’envoyer la requête fetch.
+
+    const email = document.getElementById("email").value.trim(); // SELECTIONNE LA BALISE HTML AVEC ID "email" SANS LES ESPACES 
+    const password = document.getElementById("password").value.trim(); // SELECTIONNE LA BALISE HTML AVEC ID "password" SANS LES ESPACES 
+
+    // ICI ON FAIS UN TRY (ENVOIE DE REQUETE) DONC ON SE CONNECTE VIA UNE REQUETE HTTP DE TYPE: POST (SOUS FORMAT JSON exemple : {"email": "test@gmail.com", "password": 1234}) A L'URL SUIVANT : http://localhost:5678/api/users/login 
+    try{
+        const response = await fetch("http://localhost:5678/api/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",   // ICI DANS LE HEADER DE LA REQUETE HTTP DE TYPE POST ON INDIQUE QUE LA REQUETE POSSEDE DES DONNEES SOUS FORMAT JSON
+            },
+            body: JSON.stringify({ email, password }), // ET DANS LE BODY ON INDIQUE LE MAIL ET PASSWORD EN FORMAT JSON exemple : {"email": "test@gmail.com", "password": 1234}
+        });
+
+        if (response.ok) { // SI LENVOIE DE LA REQUETE EST UN SUCCES 
+            const data = await response.json(); // ON RECUPERE CE MESSAGE DE SUCCES EN FORMAT JSON ET ON LE STOCKE DANS LA VARIABLE "data"
+            localStorage.setItem("token", data.token); // ET ON CREER UN TOKEN POUR L'UTILISATEUR QUI VIENT DE SE CONNECTER
+            alert("Connexion réussie !"); // ON AFFICHE LE MESSAGE "Connexion réussie !
+            window.location.href = "index.html";  // ET ON REDIRIGE L'UTILISATEUR QUI S'EST CONNECTER VERS LA PAGE INDEX.HTML
+        } else { // SINON ON RESTE SUR LA PAGE DE CONNEXION SI LA CONNECION A ECHOUER
+            document.getElementById("login-error").style.display = "block"; // ON AFFICHE MESSAGE ERREUR
+        }
+    } catch (error) {
+        console.error("Erreur lors de la connexion :", error); // DONC SI LA CONNEXION A ECHOUER ON AFFICHE AUSSI UN MESSAGE D'ERREUR DANS LA CONSOLE
+    }
+});
+
+
+// FONCTION POUR AFFICHER LA FENETRE MODALE 
+async function fetchWorksAndDisplayInModal() {
+    try{
+        const response = await fetch("http://localhost:5678/api/works"); // RECUPERATION DES DONNEES (DES TRAVAUX) DEPUIS LOCALHOST/API/WORKS
+        const travaux = await response.json(); // RECUPERRATION DES DONNES SOUS FORMAT JSON 
+
+        const modalGallery = document.getElementById("modal-gallery"); // SELECTIONNER LA BALISE HTML AVEC L'ID "modal-gallery"
+        modalGallery.innerHTML = ""; // ON SUPPRIME TOUS CE QUI A DANS LA BALISE AVEC L'ID "modal-gallery" DANS LE BUT D'AFFICHER LE HTML DE MANIERE DYNAMIQUE VIA JAVASCRIPT
+
+        travaux.forEach(work => { // ICI ON FAIT UNE BOUCLE "FOR" POUR CHAQUE TRAVAIL QU'ON RECUPERER DEPUIS LOCALHOST/API/WORKS
+            const figure = document.createElement("figure"); // ET POUR CHAQUE TRAVAIL ON CREER UNE BALISE HTML FIGURE 
+            figure.classList.add("modal-figure"); // ON AJOUTE UNE CLASS "modal-figure" POUR AFFICHER TOUS LES TRAVAUX AVEC IMAGE OU ON AJOUTE POUR CHAQUE TRVAIL ON AJOUTE UNE CLASSE NOMMER "modal-figure" 
+
+            const img = document.createElement("img"); // ON CREER POUR CHAQUE TRAVAIL UNE BALISE IMG (IMAGE)
+            img.src = work.imageUrl; // ON AJOUTE DANS LA BALISE IMAGE L'URL QU'ON RECUPERE DEPUIS LOCALHOST/API/WORKS
+            img.alt = work.title; // ON AJOUTE LE TITRE POUR CHAQUE PROJET QU'ON RECUPERE DEPUIS LOCALHOST/API/WORKS
+            img.classList.add("modal-img"); // ET ON AJOUTE POUR CHAQUE BALISE IMAGE LA CLASSE "modal-img"
+
+            const deleteIcon = document.createElement("i"); // ON CREER UNE BALISE I POUR AJOUTER UN ICON (POUR SUPPRIMER)
+            deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon"); // ICI ON CREER L'ICON CORBEILLE AVEC FONT AWESOME
+            deleteIcon.setAttribute("data-id", work.id); // ET ON DONNE A CETTTE ICONE UN ATTRIBUT "data-id"
+
+            figure.appendChild(img); // AJOUT ET AFFICHAGE DES IMAGES POUR CHAQUE PROJETS
+            figure.appendChild(deleteIcon);  // AJOUT ET AFFICHAGE DES ICONES SUPPRIMER (CORBEILLE) POUR CHAQUE PROJETS
+            modalGallery.appendChild(figure); // AJOUT DES BALISES FIGURES POUR CHAQUE PROJET
+        });
+
+    } catch (error) { // SI TOUS LE CODE PRECEDENT N'A PAS FONCTIONNER ON AFFICHE LE MESSAGE D'ERREUR SUIVANT
+        console.error("Erreur lors de l'affichage des travaux dans la modale :", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    chargerTravaux(); // ON AFFICHE TOUS LES TRAVAUX
+    filtres(); // ON AFFICHE TOUS LES FILTRES
+});
+
+
+const loginLink = document.getElementById("login-link"); // SELECTIONNE LA BALISE AVEC L'ID "login-link"
+if (loginLink) { // SI ON CLIQUE SUR "login" DANS LE MENU DE NAVIGATION
+    loginLink.addEventListener("click", afficherFormulaireConnexion);  // ON AFFICHE LA PAGE DE CONNEXION APRES QUE L'UTILISATEUR AIT CLIQUER SUR "login" DANS LE MENU DE NAVIGATION
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    chargerTravaux(); // AFFICHER TOUS LES TRAVAUX
+    filtres(); // AFFICHER TOUS LES FILTRES
+
+    const token = localStorage.getItem("token"); // RECUPERATION DU TOKEN GENERER PAR LE BACKEND LOCALHOST/API
+
+    const editBtn = document.getElementById("edit-btn"); // SELECTIONNE LA BALISE HTML AVEC ID "edit-btn"
+    if (token && editBtn) { // SI UN TOKEN A ETE GENERER ET QUE LE BOUTON "modifier" EST VISIBLE SUR LA PAGE
+        editBtn.style.display = "inline-flex" // AFFICHER LE BOUTON "modifier" EN "inline-flex" DONC AFFICHER HORIZONTALEMENT A GAUCHE (donc aligner horizontalement au début )
+    }
+
+    const loginLink = document.getElementById("login-link"); // SELECTIONNE LA BALISE HTML AVEC L'ID "login-link"
+    if (loginLink) { // SI LE LIEN VERS "login" (la page de connexion) EST PRESENTE 
+        if (token) { // ET SI UN TOKEN A BIEN ETE GENERER ET ATTRIBUER A L'UTILISATEUR QUI A ETE CONNECTER 
+            loginLink.textContent = "logout";  // ON AFFICHE DANS LE MENU DE NAVIGATION "logout"
+            loginLink.addEventListener("click", () => {  // LORSQUE L'UTILLISATEUR CLIQUERA SUR "logout"
+                localStorage.removeItem("token"); // ON SUPPRIME LE TOKEN QUI A ETE ATTRIBUER A L'UTILISATEUR QUI S'ETAIT CONNECTER
+                window.location.reload(); // ET ON ACTUALISE LA PAGE DONC ON REVIENT SUR LA PAGE D'ACCUEIL
+            });
+        } else { // SINON SI LE CODE PRECEDENT N'A PAS FONCTIONNER ON RESTE SUR LA PAGE DE CONNEXION
+            loginLink.addEventListener("click", afficherFormulaireConnexion);
+        }
+    }
+});
+
+
+// OUVERTURE DE LA FENETRE MODALE
+document.getElementById("open-modal").addEventListener("click", () => { // ON SELECTIONNE LA BALISE HTML AVEC L'ID "open-modal" LORS DU CLIQUE DONC LORSQU'ON CLIQUERA SUR LE BOUTON "modifier"
+    document.getElementById("modal").classList.remove("hidden"); // SELECTIONNE LA BALISE HTML AVEC L'ID "modal" 
+    fetchWorksAndDisplayInModal(); // AFFICHAGE DE LA FENETRE MODALE
+});
+
+
+// FERMETURE DE LA FENETRE MODALE 
+document.getElementById("close-modal").addEventListener("click", () => { // LORSQU'ON CLIQUERA SUR LA CROIX DE LA FENETRE MODALE OU ON CLIQUE A L'EXTERIEUR DE LA FENETRE MODALE ON FERME LA FENETRE MODALE
+    document.getElementById("modal").classList.add("hidden"); // SELECTIONNE LA BALISE HTML AVEC LA CLASSE "hidden" ET ON FERME LA FENETRE MODALE (c'est pourquoi on fait un classList.add("hidden")
+});
+
+
+// AFFICHAGE DU CONTENU DE LA FENETRE MODALE AVEC TOUS LES PROJETS
+document.getElementById("modal").addEventListener("click", (event) => { // SELECTIONNE LA BALISE HTML "modal" LORSQUE ON OUVRE LA FENETRE MODALE (en cliquant sur le bouton modifier)
+    const modalContent = document.querySelector(".modal-content"); // SELECTIONNE LA BALISE HTML AVEC LA CLASSE "modal-content" ET ON AFFICHE LE CONTENU DONC TOUS LES PROJETS  
+    if (!modalContent.contains(event.target)) { // si on clique à l’extérieur de la fenetre modale
+        document.getElementById("modal").classList.add("hidden"); //  si on clique à l’extérieur de la fenetre modale  ALORS ON FERME LA FENETRE MODALE
+    }
+});
