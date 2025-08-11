@@ -480,9 +480,25 @@ font-weight: 700;
 .upload-zone {
   border: 2px dashed #ccc;
   border-radius: 5px;
-  padding: 65px 0;
-  text-align: center;
+  padding: 20px;
+  display: flex; /* Active flexbox */
+  flex-direction: column; /* Empile les éléments verticalement */
+  align-items: center; /* Centre horizontalement */
+  justify-content: center; /* Centre verticalement */
+  gap: 10px; /* Espacement entre les éléments */
+  height: 200px; /* Hauteur fixe pour bien voir l’effet */
 }
+
+#placeholder-image {
+  width: 100px;
+  height: auto;
+  opacity: 0.6;
+}
+
+
+
+
+
 .upload-label {
   display: inline-block;
   background: #e8f0fe;

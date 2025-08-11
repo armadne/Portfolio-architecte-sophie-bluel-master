@@ -316,3 +316,24 @@ window.addEventListener("click", (e) => {
     modalViewGallery.classList.remove("hidden");
   }
 });
+
+
+const photoInput = document.getElementById("photo-input");
+const photoPreview = document.getElementById("photo-preview");
+const placeholderImage = document.getElementById("placeholder-image");
+
+photoInput.addEventListener("change", () => {
+  const file = photoInput.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      photoPreview.src = e.target.result;
+      photoPreview.classList.remove("hidden");
+      placeholderImage.classList.add("hidden");
+    };
+    reader.readAsDataURL(file);
+  } else {
+    photoPreview.classList.add("hidden");
+    placeholderImage.classList.remove("hidden");
+  }
+});
