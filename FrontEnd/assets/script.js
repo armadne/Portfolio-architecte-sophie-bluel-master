@@ -279,7 +279,7 @@ document.getElementById("modal").addEventListener("click", (event) => {
 });
 
 
-
+// VUE FENTETRE MODALE : AJOUT PHOTO
 // Sélection des éléments
 const addPhotoBtn = document.getElementById("add-photo-btn");
 const modalViewGallery = document.getElementById("modal-view-gallery");
