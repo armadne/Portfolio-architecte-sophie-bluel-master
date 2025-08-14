@@ -317,23 +317,52 @@ window.addEventListener("click", (e) => {
   }
 });
 
+/*
+const input = document.querySelector(".photo-input");
+const display = document.querySelector(".upload-placeholder");
 
-const photoInput = document.getElementById("photo-input");
-const photoPreview = document.getElementById("photo-preview");
-const placeholderImage = document.getElementById("placeholder-image");
-
-photoInput.addEventListener("change", () => {
-  const file = photoInput.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      photoPreview.src = e.target.result;
-      photoPreview.classList.remove("hidden");
-      placeholderImage.classList.add("hidden");
-    };
-    reader.readAsDataURL(file);
-  } else {
-    photoPreview.classList.add("hidden");
-    placeholderImage.classList.remove("hidden");
-  }
+input.addEventListener("change", () => {
+    const file = input.files[0];
+    if (file) {
+        const imgURL = URL.createObjectURL(file);
+        //display.innerHTML = `<img src="${imgURL}" alt="Preview" id="upload-placeholder">`;
+        display.innerHTML = `<div class="upload-placeholder" id="upload-placeholder">`
+    }
 });
+*/
+
+/*
+  const display = document.querySelectorById("photo-input");
+        const input = document.querySelectorById("upload-placeholder");
+
+        input.addEventListener("change", () => {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    
+                     display.innerHTML = `<div class="upload-placeholder" id="upload-placeholder">`; 
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+*/
+
+document.getElementById('input-file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const placeholder = document.getElementById('upload-placeholder');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            placeholder.innerHTML = `<img src="${event.target.result}" alt="Aperçu" style="max-width:100%; max-height:200px;">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        placeholder.innerHTML = '';
+    }
+});
+
+

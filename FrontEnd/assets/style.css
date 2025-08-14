@@ -577,3 +577,60 @@ button.active {
   background: #1d6154;
   cursor: pointer;
 }
+
+/*
+.upload-placeholder
+
+{
+  width: 450px;
+  height: 200px;
+  border: 2px solid black;
+}*/
+
+
+#remove-photo {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  line-height: 22px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#photo-preview {
+  max-width: 100%;
+  max-height: 170px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+#upload-placeholder {
+  cursor: pointer;
+  width: 300px;
+  height: 100px;
+}
+
+
+    /* Zone d'affichage de l'image */
+    .display {
+        height: 300px;
+        width: 100%;
+        background-color: #f4f4f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ccc;
+        margin-top: 10px;
+    }
+    .display img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
