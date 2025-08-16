@@ -225,27 +225,35 @@ document.addEventListener("DOMContentLoaded", () => {
     modalViewGallery?.classList.remove("hidden");
   });
 
-  // Upload photo preview
-  const display = document.getElementById("upload-placeholder");
-  const input = document.getElementById("input-file");
-  if (input && display) {
-    input.addEventListener("change", () => {
-      const file = input.files[0];
-      if (!file) return;
+// Upload photo preview
+const display = document.getElementById("upload-placeholder");
+const input = document.getElementById("input-file");
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        let img = display.querySelector("img");
-        if (!img) {
-          img = document.createElement("img");
-          display.innerHTML = "";
-          display.appendChild(img);
-        }
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
+if (input && display) {
+  input.addEventListener("change", () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      display.innerHTML = ""; // 🔥 enlève le bouton + et le texte
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.id = "photo-preview";
+      img.style.maxHeight = "100%"; // pour rester dans le cadre
+      img.style.objectFit = "contain";
+      
+      // 👉 Clique sur l'image = re-ouvrir l'input file
+      img.addEventListener("click", () => {
+        input.click();
+      });
+
+      display.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 
   // Fermer modale en cliquant en dehors
   window.addEventListener("click", e => {

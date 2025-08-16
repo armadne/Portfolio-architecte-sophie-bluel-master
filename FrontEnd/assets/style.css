@@ -613,8 +613,9 @@ button.active {
 
 #upload-placeholder {
   cursor: pointer;
-  width: 300px;
-  height: 100px;
+    display: flex;
+    flex-direction: column;
+  height: 169px;
 }
 
 
