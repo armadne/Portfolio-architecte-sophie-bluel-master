@@ -1,33 +1,33 @@
 // script.js
 
-// Variable globale pour stocker tous les travaux une fois récupérés
+// Variable globale pour stocker tous les travaux
 let tousLesTravaux = [];
 
-// Fonction qui récupère tous les travaux depuis l'api localhost/works et va les afficher sur le site dans "mes projets"
+// ==================== CHARGEMENT DES TRAVAUX ====================
 async function chargerTravaux() {
   try {
     const reponse = await fetch("http://localhost:5678/api/works");
-    tousLesTravaux = await reponse.json(); // On stocke les travaux pour les réutiliser plus tard
-    afficherTravaux(tousLesTravaux); // On affiche tout au début
+    tousLesTravaux = await reponse.json();
+    afficherTravaux(tousLesTravaux);
   } catch (erreur) {
     console.error("Erreur lors du chargement des travaux :", erreur);
   }
 }
 
-// Fonction d'affichage des travaux dans la galerie
+// Affiche les travaux dans la galerie
 function afficherTravaux(listeTravaux) {
   const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = ""; // Si besoin on vide les balises présents dans la balise div avec la classe galerie
+  if (!gallery) return;
 
-  // Pour chaque projet on va récupérer les titres, images de chaque projet depuis localhost/works pour les afficher sur le site
+  gallery.innerHTML = "";
+
   listeTravaux.forEach(work => {
-    const figure = document.createElement("figure"); // creation balise figure (fonctionne comme un container comme div)
-
+    const figure = document.createElement("figure");
     const image = document.createElement("img");
     image.src = work.imageUrl;
     image.alt = work.title;
 
-    const titre = document.createElement("figcaption"); // creation d'une légende
+    const titre = document.createElement("figcaption");
     titre.textContent = work.title;
 
     figure.appendChild(image);
@@ -36,51 +36,39 @@ function afficherTravaux(listeTravaux) {
   });
 }
 
-
-
-
-// Fonction qui affiche les filtres (boutons)
-async function filtres() {
+// ==================== FILTRES ====================
+async function afficherFiltres() {
   try {
-    const reponse = await fetch("http://localhost:5678/api/categories"); // Récuperation des noms des catégories depuis loaclhost/categories
+    const reponse = await fetch("http://localhost:5678/api/categories");
     const categories = await reponse.json();
 
-    const filtresContainer = document.querySelector(".filtre");  // On sélectionne l’endroit où les boutons de filtre seront affichés
+    const filtresContainer = document.querySelector(".filtre");
+    if (!filtresContainer) return;
     filtresContainer.innerHTML = "";
 
-    // Création du Bouton "Tous" pour afficher tous les projets (aucuns filtres appliqués)
+    // Bouton "Tous"
     const boutonTous = document.createElement("button");
     boutonTous.textContent = "Tous";
     boutonTous.dataset.id = 0;
     boutonTous.classList.add("filtre-btn");
     filtresContainer.appendChild(boutonTous);
 
-    // Boutons de catégories
+    // Boutons catégories
     categories.forEach(categorie => {
       const bouton = document.createElement("button");
-      bouton.textContent = categorie.name; // On crée un bouton avec le nom de la catégorie.
-      bouton.dataset.id = categorie.id; // Quand on clique dessus, on recharge les projets en filtrant par l’id de cette catégorie.
+      bouton.textContent = categorie.name;
+      bouton.dataset.id = categorie.id;
       bouton.classList.add("filtre-btn");
       filtresContainer.appendChild(bouton);
     });
 
-//Cette partie (ci dessus) sert à afficher les boutons de filtre dans le HTML.
-//Chaque bouton correspond à une catégorie (ex : Objets, Appartements, Hôtels).
-//On leur associe un identifiant (dataset.id) qui sera utilisé plus tard pour filtrer.
-// Sa ne filtre rien pour le moment
-
-
-
-
-
-
-    // Gestion des clics et pièce centrale qui fait le lien entre les boutons créés dynamiquement et les fonctions de filtrage.
-    const boutons = document.querySelectorAll(".filtre-btn"); // On récupère tous les boutons avec la classe "filtre-btn"
+    // Gestion des clics
+    const boutons = document.querySelectorAll(".filtre-btn");
     boutons.forEach(bouton => {
-      bouton.addEventListener("click", () => { 
-        const idCategorie = parseInt(bouton.dataset.id); // récupère l’id de la catégorie depuis un data-id (ex : <button data-id="1">Objets</button>)
-        filtrerTravaux(idCategorie); //afficher les projets qui correspondent à la catégorie (exemple categorie: objets)
-        activerBouton(bouton); // mettre en surbrillance le bouton cliqué
+      bouton.addEventListener("click", () => {
+        const idCategorie = parseInt(bouton.dataset.id);
+        filtrerTravaux(idCategorie);
+        activerBouton(bouton);
       });
     });
 
@@ -89,82 +77,59 @@ async function filtres() {
   }
 }
 
-
-
-
-
-// Fonction qui filtre les travaux selon la catégorie cliquée
-function filtrerTravaux(idCategorie) { 
+function filtrerTravaux(idCategorie) {
   if (idCategorie === 0) {
-    afficherTravaux(tousLesTravaux); // Afficher tous les projets
+    afficherTravaux(tousLesTravaux);
   } else {
-    const travauxFiltres = tousLesTravaux.filter(
-      work => work.categoryId === idCategorie
-    );
-    afficherTravaux(travauxFiltres); // Afficher les projets filtrés
+    const travauxFiltres = tousLesTravaux.filter(work => work.categoryId === idCategorie);
+    afficherTravaux(travauxFiltres);
   }
 }
 
-//Cette fonction "filtrerTravaux" est appelée quand un bouton est cliqué.
-//Elle prend l’id de la catégorie du bouton cliqué et :
-//soit affiche tous les projets si idCategorie === 0 (souvent "Tous"), soit affiche uniquement les projets de cette catégorie.
-
-
-
-// Fonction pour gérer l'apparence du bouton actif
 function activerBouton(boutonActif) {
   const boutons = document.querySelectorAll(".filtre-btn");
-  boutons.forEach(b => b.classList.remove("actif")); //  On enlève la classe CSS "actif" à tous les boutons pour que un seul puisse être actif à la fois.
-  boutonActif.classList.add("actif"); // On ajoute la classe "actif" au bouton qui a été cliqué.
-  // lors du clique sur le bouton , le bouton devient actif avec un changement de couleur
+  boutons.forEach(b => b.classList.remove("actif"));
+  boutonActif.classList.add("actif");
 }
 
-
-
-// === Affiche dynamiquement le formulaire de connexion ===
+// ==================== FORMULAIRE DE CONNEXION ====================
 function afficherFormulaireConnexion() {
   const main = document.querySelector("main");
+  if (!main) return;
+
   main.innerHTML = `
     <section class="login-section">
       <h2 class="login-title">Log In</h2>
       <form id="login-form" class="login-form">
         <label for="email" class="login-label">E-mail</label>
         <input type="email" id="email" class="login-input" required />
-
         <label for="password" class="login-label">Mot de passe</label>
         <input type="password" id="password" class="login-input" required />
-
         <button type="submit" class="login-button">Se connecter</button>
-
         <p id="login-error" class="login-error">Email ou mot de passe incorrect.</p>
         <a href="#" class="login-link">Mot de passe oublié</a>
       </form>
     </section>
   `;
 
-  // Gestion du formulaire
   const form = document.getElementById("login-form");
-
-  form.addEventListener("submit", async (e) => {
+  form?.addEventListener("submit", async e => {
     e.preventDefault();
-
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
     try {
       const response = await fetch("http://localhost:5678/api/users/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
         alert("Connexion réussie !");
-        window.location.href = "index.html"; // Redirige vers la page d'accueil
+        window.location.href = "index.html";
       } else {
         document.getElementById("login-error").style.display = "block";
       }
@@ -174,18 +139,14 @@ function afficherFormulaireConnexion() {
   });
 }
 
-
-
-
-
-// Fonction pour afficher les travaux dans la modale
+// ==================== MODALE ====================
 async function fetchWorksAndDisplayInModal() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
     const travaux = await response.json();
-
     const modalGallery = document.getElementById("modal-gallery");
-    modalGallery.innerHTML = ""; // On vide avant de remplir
+    if (!modalGallery) return;
+    modalGallery.innerHTML = "";
 
     travaux.forEach(work => {
       const figure = document.createElement("figure");
@@ -198,7 +159,7 @@ async function fetchWorksAndDisplayInModal() {
 
       const deleteIcon = document.createElement("i");
       deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon");
-      deleteIcon.setAttribute("data-id", work.id);
+      deleteIcon.dataset.id = work.id;
 
       figure.appendChild(img);
       figure.appendChild(deleteIcon);
@@ -210,159 +171,88 @@ async function fetchWorksAndDisplayInModal() {
   }
 }
 
-
-
-
-// Quand le DOM est prêt, on charge tout
-// Après que tous le code HTML soit chargé
+// ==================== ÉVÉNEMENTS DOM ====================
 document.addEventListener("DOMContentLoaded", () => {
-  chargerTravaux(); // Affiche dynamiquement via "fetch" les projets
-  filtres(); // Affiche dynamiquement via "fetch" les filtres sous forme de boutons
-  
-});
-
-
-  // Gestion du bouton "login"
-  const loginLink = document.getElementById("login-link");
-  if (loginLink) { // Lorsqu'on clique sur "login" dans le menu de navigation on affiche la page de connexion
-    loginLink.addEventListener("click", afficherFormulaireConnexion);
-  }
-
-
-
-
-
-  document.addEventListener("DOMContentLoaded", () => {
   chargerTravaux();
-  filtres();
+  afficherFiltres();
 
+  // Gestion login/logout
   const token = localStorage.getItem("token");
-
-  // Afficher le bouton "modifier" si connecté
-  const editBtn = document.getElementById("edit-btn");
-  if (token && editBtn) {
-    editBtn.style.display = "inline-flex"; // ou "inline-block" selon ton style
-  }
-
-  // Gestion du lien login/logout
   const loginLink = document.getElementById("login-link");
+  const editBtn = document.getElementById("edit-btn");
+
+  if (editBtn) editBtn.style.display = token ? "inline-flex" : "none";
+
   if (loginLink) {
-    if (token) {
-      loginLink.textContent = "logout";
-      loginLink.addEventListener("click", () => {
+    loginLink.textContent = token ? "logout" : "login";
+    loginLink.addEventListener("click", e => {
+      e.preventDefault();
+      if (token) {
         localStorage.removeItem("token");
         window.location.reload();
-      });
-    } else {
-      loginLink.addEventListener("click", afficherFormulaireConnexion);
-    }
+      } else {
+        afficherFormulaireConnexion();
+      }
+    });
   }
-});
 
-// Ouverture
-document.getElementById("open-modal").addEventListener("click", () => {
-  document.getElementById("modal").classList.remove("hidden");
-  fetchWorksAndDisplayInModal();
-});
+  // Modale ouverture/fermeture
+  const modal = document.getElementById("modal");
+  document.getElementById("open-modal")?.addEventListener("click", () => {
+    modal?.classList.remove("hidden");
+    fetchWorksAndDisplayInModal();
+  });
+  document.getElementById("close-modal")?.addEventListener("click", () => {
+    modal?.classList.add("hidden");
+  });
+  modal?.addEventListener("click", e => {
+    const modalContent = document.querySelector(".modal-content");
+    if (!modalContent.contains(e.target)) modal.classList.add("hidden");
+  });
 
-// Fermeture via la croix
-document.getElementById("close-modal").addEventListener("click", () => {
-  document.getElementById("modal").classList.add("hidden");
-});
+  // Vue ajout photo
+  const addPhotoBtn = document.getElementById("add-photo-btn");
+  const modalViewGallery = document.getElementById("modal-view-gallery");
+  const modalViewAdd = document.getElementById("modal-view-add");
+  const backToGalleryBtn = document.getElementById("back-to-gallery");
 
-// Fermeture en cliquant en dehors
-document.getElementById("modal").addEventListener("click", (event) => {
-  const modalContent = document.querySelector(".modal-content");
-  if (!modalContent.contains(event.target)) {
-    document.getElementById("modal").classList.add("hidden");
+  addPhotoBtn?.addEventListener("click", () => {
+    modalViewGallery?.classList.add("hidden");
+    modalViewAdd?.classList.remove("hidden");
+  });
+  backToGalleryBtn?.addEventListener("click", () => {
+    modalViewAdd?.classList.add("hidden");
+    modalViewGallery?.classList.remove("hidden");
+  });
+
+  // Upload photo preview
+  const display = document.getElementById("upload-placeholder");
+  const input = document.getElementById("input-file");
+  if (input && display) {
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        let img = display.querySelector("img");
+        if (!img) {
+          img = document.createElement("img");
+          display.innerHTML = "";
+          display.appendChild(img);
+        }
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
-});
 
-
-// VUE FENTETRE MODALE : AJOUT PHOTO
-// Sélection des éléments
-const addPhotoBtn = document.getElementById("add-photo-btn");
-const modalViewGallery = document.getElementById("modal-view-gallery");
-const modalViewAdd = document.getElementById("modal-view-add");
-const backToGalleryBtn = document.getElementById("back-to-gallery");
-const closeModal = document.getElementById("close-modal");
-const modal = document.getElementById("modal");
-
-// Ouvrir la vue "Ajout photo"
-addPhotoBtn.addEventListener("click", () => {
-  modalViewGallery.classList.add("hidden");
-  modalViewAdd.classList.remove("hidden");
-});
-
-// Retour à la vue galerie
-backToGalleryBtn.addEventListener("click", () => {
-  modalViewAdd.classList.add("hidden");
-  modalViewGallery.classList.remove("hidden");
-});
-
-// Fermer la modale
-closeModal.addEventListener("click", () => {
-  modal.classList.add("hidden");
-  // Toujours revenir à la vue galerie par défaut
-  modalViewAdd.classList.add("hidden");
-  modalViewGallery.classList.remove("hidden");
-});
-
-// Fermer si clic en dehors du contenu
-window.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.classList.add("hidden");
-    modalViewAdd.classList.add("hidden");
-    modalViewGallery.classList.remove("hidden");
-  }
-});
-
-/*
-const input = document.querySelector(".photo-input");
-const display = document.querySelector(".upload-placeholder");
-
-input.addEventListener("change", () => {
-    const file = input.files[0];
-    if (file) {
-        const imgURL = URL.createObjectURL(file);
-        //display.innerHTML = `<img src="${imgURL}" alt="Preview" id="upload-placeholder">`;
-        display.innerHTML = `<div class="upload-placeholder" id="upload-placeholder">`
+  // Fermer modale en cliquant en dehors
+  window.addEventListener("click", e => {
+    if (e.target === modal) {
+      modal?.classList.add("hidden");
+      modalViewAdd?.classList.add("hidden");
+      modalViewGallery?.classList.remove("hidden");
     }
+  });
 });
-*/
-
-/*
-  const display = document.querySelectorById("photo-input");
-        const input = document.querySelectorById("upload-placeholder");
-
-        input.addEventListener("change", () => {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    
-                     display.innerHTML = `<div class="upload-placeholder" id="upload-placeholder">`; 
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-
-*/
-
-document.getElementById('input-file').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const placeholder = document.getElementById('upload-placeholder');
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            placeholder.innerHTML = `<img src="${event.target.result}" alt="Aperçu" style="max-width:100%; max-height:200px;">`;
-        };
-        reader.readAsDataURL(file);
-    } else {
-        placeholder.innerHTML = '';
-    }
-});
-
-
