@@ -140,6 +140,7 @@ nav ul {
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
+  cursor: pointer;
 }
 
 li:hover {
@@ -636,4 +637,24 @@ button.active {
         object-fit: contain;
     }
 
-  
+#mode-edition-container {
+  display: flex;
+  justify-content: center;   /* centre horizontalement */
+  align-items: center;       /* centre verticalement */
+  gap: 10px;                 /* espace entre l’icône et le texte */
+  background-color: black;
+  height: 45px;
+}
+
+#mode-edition-container p {
+  color: white;
+  font-family: "Work Sans", sans-serif;
+  font-weight: 200;
+  font-size: 16px;
+  margin: 0; /* supprime le décalage causé par le margin par défaut */
+}
+
+#mode-edition-container .fa-solid {
+  color: white;
+  font-size: 18px; /* ajuste la taille de l’icône */
+}

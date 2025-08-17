@@ -178,6 +178,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gestion login/logout
   const token = localStorage.getItem("token");
+
+    //  Affiche la barre noire "Mode Edition" seulement si connecté
+  const modeEditionBar = document.getElementById("mode-edition-container");
+  if (modeEditionBar) {
+    modeEditionBar.style.display = token ? "flex" : "none"; 
+  }
+
+    //  On n'affiche les filtres QUE si pas connecté
+  if (!token) {
+    afficherFiltres();
+  } else {
+    const filtresContainer = document.querySelector(".filtre");
+    if (filtresContainer) filtresContainer.style.display = "none";
+  }
+
+
+
+
   const loginLink = document.getElementById("login-link");
   const editBtn = document.getElementById("edit-btn");
 
