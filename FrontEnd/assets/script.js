@@ -3,7 +3,7 @@
 // Variable globale pour stocker tous les travaux
 let tousLesTravaux = [];
 
-// ==================== CHARGEMENT DES TRAVAUX ====================
+
 async function chargerTravaux() {
   try {
     const reponse = await fetch("http://localhost:5678/api/works");
@@ -36,7 +36,7 @@ function afficherTravaux(listeTravaux) {
   });
 }
 
-// ==================== FILTRES ====================
+
 async function afficherFiltres() {
   try {
     const reponse = await fetch("http://localhost:5678/api/categories");
@@ -92,7 +92,7 @@ function activerBouton(boutonActif) {
   boutonActif.classList.add("actif");
 }
 
-// ==================== FORMULAIRE DE CONNEXION ====================
+
 function afficherFormulaireConnexion() {
   const main = document.querySelector("main");
   if (!main) return;
@@ -139,7 +139,7 @@ function afficherFormulaireConnexion() {
   });
 }
 
-// ==================== MODALE ====================
+// FENETRE MODALE 
 async function fetchWorksAndDisplayInModal() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -171,7 +171,7 @@ async function fetchWorksAndDisplayInModal() {
   }
 }
 
-// ==================== ÉVÉNEMENTS DOM ====================
+// ÉVÉNEMENTS DOM 
 document.addEventListener("DOMContentLoaded", () => {
   chargerTravaux();
   afficherFiltres();
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modeEditionBar.style.display = token ? "flex" : "none"; 
   }
 
-    //  On n'affiche les filtres QUE si pas connecté
+    //  On n'affiche les filtres QUE si l'user n'est pas connecté
   if (!token) {
     afficherFiltres();
   } else {
@@ -261,7 +261,7 @@ if (input && display) {
       img.style.maxHeight = "100%"; // pour rester dans le cadre
       img.style.objectFit = "contain";
       
-      // 👉 Clique sur l'image = re-ouvrir l'input file
+      // Clique sur l'image = re-ouvrir l'input file
       img.addEventListener("click", () => {
         input.click();
       });
