@@ -177,7 +177,7 @@ deleteIcon.addEventListener("click", async () => {
         // Supprimer du DOM (modale)
         figure.remove();
 
-        //  Supprimer aussi dans la galerie principale
+        // 🔥 Supprimer aussi dans la galerie principale
         tousLesTravaux = tousLesTravaux.filter(t => t.id !== work.id);
         afficherTravaux(tousLesTravaux);
       } else {
