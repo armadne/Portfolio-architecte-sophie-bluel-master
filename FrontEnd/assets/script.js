@@ -174,7 +174,7 @@ deleteIcon.addEventListener("click", async () => {
       });
 
       if (response.ok) {
-        // 🔥 Supprimer du DOM (modale)
+        // Supprimer du DOM (modale)
         figure.remove();
 
         // 🔥 Supprimer aussi dans la galerie principale
