@@ -46,40 +46,35 @@ async function afficherFiltres() {
     if (!filtresContainer) return;
     filtresContainer.innerHTML = "";
 
+    // Fonction pour créer un bouton
+    function creerBouton(id, label) {
+      const bouton = document.createElement("button");
+      bouton.textContent = label;
+      bouton.dataset.id = id;
+      bouton.classList.add("filtre-btn");
+
+      // Ajout direct de l'événement
+      bouton.addEventListener("click", () => {
+        filtrerTravaux(parseInt(bouton.dataset.id));
+        activerBouton(bouton);
+      });
+
+      return bouton;
+    }
+
     // Bouton "Tous"
-    const boutonTous = document.createElement("button");
-    boutonTous.textContent = "Tous";
-    boutonTous.dataset.id = 0;
-    boutonTous.classList.add("filtre-btn");
-    filtresContainer.appendChild(boutonTous);
+    filtresContainer.appendChild(creerBouton(0, "Tous"));
 
     // Boutons catégories
     categories.forEach(categorie => {
-  const bouton = document.createElement("button");
-  bouton.textContent = categorie.name;
-  bouton.dataset.id = categorie.id;
-  bouton.classList.add("filtre-btn");
-  filtresContainer.appendChild(bouton);
-});
-
- 
-
-
-
-    // Gestion des clics
-    const boutons = document.querySelectorAll(".filtre-btn");
-    boutons.forEach(bouton => {
-      bouton.addEventListener("click", () => {
-        const idCategorie = parseInt(bouton.dataset.id);
-        filtrerTravaux(idCategorie);
-        activerBouton(bouton);
-      });
+      filtresContainer.appendChild(creerBouton(categorie.id, categorie.name));
     });
 
   } catch (erreur) {
     console.error("Erreur lors du chargement des filtres :", erreur);
   }
 }
+
 
 function filtrerTravaux(idCategorie) {
   if (idCategorie === 0) {
