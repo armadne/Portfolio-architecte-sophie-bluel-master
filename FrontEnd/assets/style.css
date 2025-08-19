@@ -630,7 +630,7 @@ button.active {
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px dashed #ccc;
+        border: 2px #ccc;
         margin-top: 10px;
     }
     .display img {
