@@ -97,32 +97,93 @@ function afficherFormulaireConnexion() {
   const main = document.querySelector("main");
   if (!main) return;
 
-  main.innerHTML = `
-    <section class="login-section">
-      <h2 class="login-title">Log In</h2>
-      <form id="login-form" class="login-form">
-        <label for="email" class="login-label">E-mail</label>
-        <input type="email" id="email" class="login-input" required />
-        <label for="password" class="login-label">Mot de passe</label>
-        <input type="password" id="password" class="login-input" required />
-        <button type="submit" class="login-button">Se connecter</button>
-        <p id="login-error" class="login-error">Email ou mot de passe incorrect.</p>
-        <a href="#" class="login-link">Mot de passe oublié</a>
-      </form>
-    </section>
-  `;
+  // Nettoyer le contenu existant
+  main.innerHTML = "";
 
-  const form = document.getElementById("login-form");
-  form?.addEventListener("submit", async e => {
+  // === Section ===
+  const section = document.createElement("section");
+  section.classList.add("login-section");
+
+  // === Titre ===
+  const h2 = document.createElement("h2");
+  h2.classList.add("login-title");
+  h2.textContent = "Log In";
+
+  // === Formulaire ===
+  const form = document.createElement("form");
+  form.id = "login-form";
+  form.classList.add("login-form");
+
+  // Label email
+  const labelEmail = document.createElement("label");
+  labelEmail.setAttribute("for", "email");
+  labelEmail.classList.add("login-label");
+  labelEmail.textContent = "E-mail";
+
+  // Input email
+  const inputEmail = document.createElement("input");
+  inputEmail.type = "email";
+  inputEmail.id = "email";
+  inputEmail.classList.add("login-input");
+  inputEmail.required = true;
+
+  // Label password
+  const labelPassword = document.createElement("label");
+  labelPassword.setAttribute("for", "password");
+  labelPassword.classList.add("login-label");
+  labelPassword.textContent = "Mot de passe";
+
+  // Input password
+  const inputPassword = document.createElement("input");
+  inputPassword.type = "password";
+  inputPassword.id = "password";
+  inputPassword.classList.add("login-input");
+  inputPassword.required = true;
+
+  // Bouton connexion
+  const btnSubmit = document.createElement("button");
+  btnSubmit.type = "submit";
+  btnSubmit.classList.add("login-button");
+  btnSubmit.textContent = "Se connecter";
+
+  // Message erreur
+  const errorMsg = document.createElement("p");
+  errorMsg.id = "login-error";
+  errorMsg.classList.add("login-error");
+  errorMsg.textContent = "Email ou mot de passe incorrect.";
+  errorMsg.style.display = "none";
+
+  // Lien mot de passe oublié
+  const forgotLink = document.createElement("a");
+  forgotLink.href = "#";
+  forgotLink.classList.add("login-link");
+  forgotLink.textContent = "Mot de passe oublié";
+
+  // ==== Construction du DOM ====
+  form.appendChild(labelEmail);
+  form.appendChild(inputEmail);
+  form.appendChild(labelPassword);
+  form.appendChild(inputPassword);
+  form.appendChild(btnSubmit);
+  form.appendChild(errorMsg);
+  form.appendChild(forgotLink);
+
+  section.appendChild(h2);
+  section.appendChild(form);
+
+  main.appendChild(section);
+
+  // === Gestion du submit ===
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = inputEmail.value.trim();
+    const password = inputPassword.value.trim();
 
     try {
       const response = await fetch("http://localhost:5678/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -131,13 +192,14 @@ function afficherFormulaireConnexion() {
         alert("Connexion réussie !");
         window.location.href = "index.html";
       } else {
-        document.getElementById("login-error").style.display = "block";
+        errorMsg.style.display = "block";
       }
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
     }
   });
 }
+
 
 // FENETRE MODALE 
 async function fetchWorksAndDisplayInModal() {
