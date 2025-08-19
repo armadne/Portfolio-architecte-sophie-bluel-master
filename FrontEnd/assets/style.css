@@ -44,12 +44,11 @@ footer, header, hgroup, menu, nav, section {
 
 
 
-
 .filtre {
   display: flex;
-  gap: 1rem;
-  margin: 1.2rem 15rem;
- 
+  justify-content: center; /* centre les boutons */
+  gap: 15px; /* espace horizontal entre chaque bouton */
+  margin: 1.2rem auto; /* auto pour centrer le conteneur */
 }
 
 

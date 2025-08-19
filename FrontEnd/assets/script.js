@@ -55,12 +55,16 @@ async function afficherFiltres() {
 
     // Boutons catégories
     categories.forEach(categorie => {
-      const bouton = document.createElement("button");
-      bouton.textContent = categorie.name;
-      bouton.dataset.id = categorie.id;
-      bouton.classList.add("filtre-btn");
-      filtresContainer.appendChild(bouton);
-    });
+  const bouton = document.createElement("button");
+  bouton.textContent = categorie.name;
+  bouton.dataset.id = categorie.id;
+  bouton.classList.add("filtre-btn");
+  filtresContainer.appendChild(bouton);
+});
+
+ 
+
+
 
     // Gestion des clics
     const boutons = document.querySelectorAll(".filtre-btn");
@@ -201,93 +205,98 @@ function afficherFormulaireConnexion() {
 }
 
 
-// FENETRE MODALE 
+// =======================
+// Création d'un élément figure dans la modale
+// =======================
+function createModalFigure(work) {
+  const figure = document.createElement("figure");
+  figure.classList.add("modal-figure");
+
+  const img = document.createElement("img");
+  img.src = work.imageUrl;
+  img.alt = work.title;
+  img.classList.add("modal-img");
+
+  const deleteIcon = document.createElement("i");
+  deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon");
+  deleteIcon.dataset.id = work.id;
+
+  deleteIcon.addEventListener("click", () => handleDeleteWork(work, figure));
+
+  figure.appendChild(img);
+  figure.appendChild(deleteIcon);
+
+  return figure;
+}
+
+// =======================
+// Suppression d'un projet
+// =======================
+async function handleDeleteWork(work, figure) {
+  if (!confirm("Voulez-vous vraiment supprimer ce projet ?")) return;
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5678/api/works/${work.id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+      figure.remove(); // Supprimer du DOM (modale)
+      tousLesTravaux = tousLesTravaux.filter(t => t.id !== work.id);
+      afficherTravaux(tousLesTravaux); // MAJ galerie principale
+    } else {
+      alert("Erreur lors de la suppression.");
+    }
+  } catch (error) {
+    console.error("Erreur :", error);
+  }
+}
+
+// =======================
+// Afficher les projets dans la modale
+// =======================
 async function fetchWorksAndDisplayInModal() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
     const travaux = await response.json();
     const modalGallery = document.getElementById("modal-gallery");
     if (!modalGallery) return;
+
     modalGallery.innerHTML = "";
-
     travaux.forEach(work => {
-      const figure = document.createElement("figure");
-      figure.classList.add("modal-figure");
-
-      const img = document.createElement("img");
-      img.src = work.imageUrl;
-      img.alt = work.title;
-      img.classList.add("modal-img");
-
-      const deleteIcon = document.createElement("i");
-      deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon");
-      deleteIcon.dataset.id = work.id;
-
-      // Gestion du clic sur la corbeille
-deleteIcon.addEventListener("click", async () => {
-  if (confirm("Voulez-vous vraiment supprimer ce projet ?")) {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5678/api/works/${work.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        // Supprimer du DOM (modale)
-        figure.remove();
-
-        //  Supprimer aussi dans la galerie principale
-        tousLesTravaux = tousLesTravaux.filter(t => t.id !== work.id);
-        afficherTravaux(tousLesTravaux);
-      } else {
-        alert("Erreur lors de la suppression.");
-      }
-    } catch (error) {
-      console.error("Erreur :", error);
-    }
-  }
-});
-
-      figure.appendChild(img);
-      figure.appendChild(deleteIcon);
-      modalGallery.appendChild(figure);
+      modalGallery.appendChild(createModalFigure(work));
     });
-
   } catch (error) {
     console.error("Erreur lors de l'affichage des travaux dans la modale :", error);
   }
 }
 
-// ÉVÉNEMENTS DOM 
-document.addEventListener("DOMContentLoaded", () => {
-  chargerTravaux();
-  afficherFiltres();
-
-  // Gestion login/logout
-  const token = localStorage.getItem("token");
-
-    //  Affiche la barre noire "Mode Edition" seulement si connecté
+// =======================
+// Gérer la barre d'édition
+// =======================
+function toggleModeEdition(token) {
   const modeEditionBar = document.getElementById("mode-edition-container");
   if (modeEditionBar) {
-    modeEditionBar.style.display = token ? "flex" : "none"; 
+    modeEditionBar.style.display = token ? "flex" : "none";
   }
-
-// On affiche les filtres seulement si l'utilisateur n'est pas connecté
-if (token) {
-  const filtresContainer = document.querySelector(".filtre");
-  if (filtresContainer) {
-    filtresContainer.style.display = "none";
-  }
-} else {
-  afficherFiltres();
 }
 
+// =======================
+// Gérer les filtres
+// =======================
+function toggleFiltres(token) {
+  const filtresContainer = document.querySelector(".filtre");
+  if (!filtresContainer) return;
+  filtresContainer.style.display = token ? "none" : "flex";
+  if (!token) afficherFiltres();
+}
 
-
-
+// =======================
+// Gérer le login/logout
+// =======================
+function setupLogin(token) {
   const loginLink = document.getElementById("login-link");
   const editBtn = document.getElementById("edit-btn");
 
@@ -305,8 +314,12 @@ if (token) {
       }
     });
   }
+}
 
-  // Modale ouverture/fermeture
+// =======================
+// Gestion ouverture / fermeture modale
+// =======================
+function setupModal() {
   const modal = document.getElementById("modal");
   document.getElementById("open-modal")?.addEventListener("click", () => {
     modal?.classList.remove("hidden");
@@ -319,8 +332,51 @@ if (token) {
     const modalContent = document.querySelector(".modal-content");
     if (!modalContent.contains(e.target)) modal.classList.add("hidden");
   });
+}
 
-  // Vue ajout photo
+// =======================
+// Gestion ajout photo
+// =======================
+function setupPhotoUpload() {
+  const display = document.getElementById("upload-placeholder");
+  const input = document.getElementById("input-file");
+
+  if (input && display) {
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        display.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.id = "photo-preview";
+        img.style.maxHeight = "100%";
+        img.style.objectFit = "contain";
+        img.addEventListener("click", () => input.click());
+        display.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+// =======================
+// INIT
+// =======================
+document.addEventListener("DOMContentLoaded", () => {
+  chargerTravaux();
+
+  const token = localStorage.getItem("token");
+
+  toggleModeEdition(token);
+  toggleFiltres(token);
+  setupLogin(token);
+  setupModal();
+  setupPhotoUpload();
+
+  // Navigation modale : galerie <-> ajout
   const addPhotoBtn = document.getElementById("add-photo-btn");
   const modalViewGallery = document.getElementById("modal-view-gallery");
   const modalViewAdd = document.getElementById("modal-view-add");
@@ -334,35 +390,8 @@ if (token) {
     modalViewAdd?.classList.add("hidden");
     modalViewGallery?.classList.remove("hidden");
   });
+});
 
-// Upload photo preview
-const display = document.getElementById("upload-placeholder");
-const input = document.getElementById("input-file");
-
-if (input && display) {
-  input.addEventListener("change", () => {
-    const file = input.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      display.innerHTML = ""; // 🔥 enlève le bouton + et le texte
-      const img = document.createElement("img");
-      img.src = e.target.result;
-      img.id = "photo-preview";
-      img.style.maxHeight = "100%"; // pour rester dans le cadre
-      img.style.objectFit = "contain";
-      
-      // Clique sur l'image = re-ouvrir l'input file
-      img.addEventListener("click", () => {
-        input.click();
-      });
-
-      display.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 
 
@@ -455,4 +484,4 @@ if (addPhotoForm) {
       modalViewGallery?.classList.remove("hidden");
     }
   });
-});
+
