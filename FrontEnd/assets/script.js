@@ -223,7 +223,7 @@ async function fetchWorksAndDisplayInModal() {
       deleteIcon.classList.add("fa-solid", "fa-trash-can", "delete-icon");
       deleteIcon.dataset.id = work.id;
 
-      // ✅ Gestion du clic sur la corbeille
+      // Gestion du clic sur la corbeille
 deleteIcon.addEventListener("click", async () => {
   if (confirm("Voulez-vous vraiment supprimer ce projet ?")) {
     try {
@@ -275,13 +275,15 @@ document.addEventListener("DOMContentLoaded", () => {
     modeEditionBar.style.display = token ? "flex" : "none"; 
   }
 
-    //  On n'affiche les filtres QUE si l'user n'est pas connecté
-  if (!token) {
-    afficherFiltres();
-  } else {
-    const filtresContainer = document.querySelector(".filtre");
-    if (filtresContainer) filtresContainer.style.display = "none";
+// On affiche les filtres seulement si l'utilisateur n'est pas connecté
+if (token) {
+  const filtresContainer = document.querySelector(".filtre");
+  if (filtresContainer) {
+    filtresContainer.style.display = "none";
   }
+} else {
+  afficherFiltres();
+}
 
 
 
