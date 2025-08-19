@@ -366,68 +366,85 @@ if (input && display) {
 
 
 
-  // Soumission du formulaire "Ajout photo"
-  const addPhotoForm = document.getElementById("add-photo-form");
-  const validerBtn = document.getElementById("valider-btn");
+// Soumission du formulaire "Ajout photo"
+const addPhotoForm = document.getElementById("add-photo-form");
+const validerBtn = document.getElementById("valider-btn");
 
-  if (addPhotoForm) {
-    addPhotoForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+if (addPhotoForm) {
+  addPhotoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const titre = document.getElementById("titre").value.trim();
-      const categorie = document.getElementById("categorie").value;
-      const fichier = document.getElementById("input-file").files[0];
-      const token = localStorage.getItem("token");
+    const titre = document.getElementById("titre").value.trim();
+    const categorie = document.getElementById("categorie").value;
+    const fichier = document.getElementById("input-file").files[0];
+    const token = localStorage.getItem("token");
 
-      if (!titre || !categorie || !fichier) {
-        alert("Merci de remplir tous les champs !");
-        return;
+    if (!titre || !categorie || !fichier) {
+      alert("Merci de remplir tous les champs !");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", titre);
+    formData.append("category", categorie);
+    formData.append("image", fichier);
+
+    try {
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+
+      if (response.ok) {
+        const newWork = await response.json();
+
+        //  Ajouter le nouveau travail à la liste globale
+        tousLesTravaux.push(newWork);
+
+        //  Réafficher tous les travaux
+        afficherTravaux(tousLesTravaux);
+
+        // Mettre à jour la galerie modale
+        fetchWorksAndDisplayInModal();
+
+        // Réinitialiser le formulaire
+        addPhotoForm.reset();
+
+        // Réinitialiser l'affichage de l'upload (sans HTML brut)
+        const display = document.getElementById("upload-placeholder");
+        display.innerHTML = ""; // Nettoyage
+
+        const img = document.createElement("img");
+        img.src = "./assets/images/picture-svgrepo-com1.png";
+        img.alt = "";
+
+        const label = document.createElement("label");
+        label.setAttribute("for", "input-file");
+        label.classList.add("upload-label");
+        label.textContent = "+ Ajouter photo";
+
+        const info = document.createElement("p");
+        info.classList.add("upload-info");
+        info.textContent = "jpg, png : 4mo max";
+
+        display.appendChild(img);
+        display.appendChild(label);
+        display.appendChild(info);
+
+        // Fermer la modale
+        modal.classList.add("hidden");
+        modalViewAdd.classList.add("hidden");
+        modalViewGallery.classList.remove("hidden");
+      } else {
+        alert("Erreur lors de l'ajout du projet.");
       }
+    } catch (error) {
+      console.error("Erreur :", error);
+    }
+  });
+}
 
-      const formData = new FormData();
-      formData.append("title", titre);
-      formData.append("category", categorie);
-      formData.append("image", fichier);
-
-      try {
-        const response = await fetch("http://localhost:5678/api/works", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData
-        });
-
-        if (response.ok) {
-          const newWork = await response.json();
-
-          // 🔥 Ajouter le nouveau travail à la liste globale
-          tousLesTravaux.push(newWork);
-
-          // 🔥 Réafficher tous les travaux
-          afficherTravaux(tousLesTravaux);
-
-          // 🔥 Mettre à jour la galerie modale
-          fetchWorksAndDisplayInModal();
-
-          // Réinitialiser le formulaire
-          addPhotoForm.reset();
-          display.innerHTML = `
-            <img src="./assets/images/picture-svgrepo-com1.png" alt="">
-            <label for="input-file" class="upload-label">+ Ajouter photo</label>
-            <p class="upload-info">jpg, png : 4mo max</p>
-          `;
-
-          // Fermer la modale
-          modal.classList.add("hidden");
-          modalViewAdd.classList.add("hidden");
-          modalViewGallery.classList.remove("hidden");
-        } else {
-          alert("Erreur lors de l'ajout du projet.");
-        }
-      } catch (error) {
-        console.error("Erreur :", error);
-      }
-    });
-  }
 
 
   // Fermer modale en cliquant en dehors
