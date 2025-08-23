@@ -3,7 +3,7 @@
 // Variable globale pour stocker tous les travaux
 let tousLesTravaux = [];
 
-
+// FONCTION RECUPERATION DES TRAVUX DEPUIS LE BACKEND : "http://localhost:5678/api/works"
 async function chargerTravaux() {
   try {
     const reponse = await fetch("http://localhost:5678/api/works");
@@ -36,7 +36,7 @@ function afficherTravaux(listeTravaux) {
   });
 }
 
-
+// AFFICHER LES FILTRES
 async function afficherFiltres() {
   try {
     const reponse = await fetch("http://localhost:5678/api/categories");
@@ -76,6 +76,7 @@ async function afficherFiltres() {
 }
 
 
+// FILTRER LES TRAVAUX ET LES AFFICHER
 function filtrerTravaux(idCategorie) {
   if (idCategorie === 0) {
     afficherTravaux(tousLesTravaux);
@@ -85,13 +86,15 @@ function filtrerTravaux(idCategorie) {
   }
 }
 
+
+// FONCTION QUI CHANGE APPARARENCE DU FILTRE SELECTIONNER
 function activerBouton(boutonActif) {
   const boutons = document.querySelectorAll(".filtre-btn");
   boutons.forEach(b => b.classList.remove("actif"));
   boutonActif.classList.add("actif");
 }
 
-
+// FONCTION AFFICHAGE FORMULAIRE DE CONNEXION
 function afficherFormulaireConnexion() {
   const main = document.querySelector("main");
   if (!main) return;
@@ -99,16 +102,16 @@ function afficherFormulaireConnexion() {
   // Nettoyer le contenu existant
   main.innerHTML = "";
 
-  // === Section ===
+  // Section 
   const section = document.createElement("section");
   section.classList.add("login-section");
 
-  // === Titre ===
+  //Titre 
   const h2 = document.createElement("h2");
   h2.classList.add("login-title");
   h2.textContent = "Log In";
 
-  // === Formulaire ===
+  // Formulaire
   const form = document.createElement("form");
   form.id = "login-form";
   form.classList.add("login-form");
@@ -158,7 +161,7 @@ function afficherFormulaireConnexion() {
   forgotLink.classList.add("login-link");
   forgotLink.textContent = "Mot de passe oublié";
 
-  // ==== Construction du DOM ====
+  // Construction du DOM 
   form.appendChild(labelEmail);
   form.appendChild(inputEmail);
   form.appendChild(labelPassword);
@@ -172,7 +175,7 @@ function afficherFormulaireConnexion() {
 
   main.appendChild(section);
 
-  // === Gestion du submit ===
+  // Gestion du submit 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = inputEmail.value.trim();
@@ -200,9 +203,9 @@ function afficherFormulaireConnexion() {
 }
 
 
-// =======================
+
 // Création d'un élément figure dans la modale
-// =======================
+
 function createModalFigure(work) {
   const figure = document.createElement("figure");
   figure.classList.add("modal-figure");
@@ -224,9 +227,9 @@ function createModalFigure(work) {
   return figure;
 }
 
-// =======================
+
 // Suppression d'un projet
-// =======================
+
 async function handleDeleteWork(work, figure) {
   if (!confirm("Voulez-vous vraiment supprimer ce projet ?")) return;
 
@@ -249,9 +252,9 @@ async function handleDeleteWork(work, figure) {
   }
 }
 
-// =======================
+
 // Afficher les projets dans la modale
-// =======================
+
 async function fetchWorksAndDisplayInModal() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -268,9 +271,9 @@ async function fetchWorksAndDisplayInModal() {
   }
 }
 
-// =======================
+
 // Gérer la barre d'édition
-// =======================
+
 function toggleModeEdition(token) {
   const modeEditionBar = document.getElementById("mode-edition-container");
   if (modeEditionBar) {
@@ -278,9 +281,9 @@ function toggleModeEdition(token) {
   }
 }
 
-// =======================
+
 // Gérer les filtres
-// =======================
+
 function toggleFiltres(token) {
   const filtresContainer = document.querySelector(".filtre");
   if (!filtresContainer) return;
@@ -288,9 +291,9 @@ function toggleFiltres(token) {
   if (!token) afficherFiltres();
 }
 
-// =======================
+
 // Gérer le login/logout
-// =======================
+
 function setupLogin(token) {
   const loginLink = document.getElementById("login-link");
   const editBtn = document.getElementById("edit-btn");
@@ -311,9 +314,9 @@ function setupLogin(token) {
   }
 }
 
-// =======================
+
 // Gestion ouverture / fermeture modale
-// =======================
+
 function setupModal() {
   const modal = document.getElementById("modal");
   document.getElementById("open-modal")?.addEventListener("click", () => {
@@ -329,9 +332,8 @@ function setupModal() {
   });
 }
 
-// =======================
 // Gestion ajout photo
-// =======================
+
 function setupPhotoUpload() {
   const display = document.getElementById("upload-placeholder");
   const input = document.getElementById("input-file");
@@ -357,9 +359,9 @@ function setupPhotoUpload() {
   }
 }
 
-// =======================
-// INIT
-// =======================
+
+// INITITALISATION : Quand le DOM est chargé : on initialise les travaux, la session utilisateur et les modales
+
 document.addEventListener("DOMContentLoaded", () => {
   chargerTravaux();
 
