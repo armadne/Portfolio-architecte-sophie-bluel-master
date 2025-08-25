@@ -682,7 +682,7 @@ button.active {
 .back-btn {
     position: absolute;
     top: -1rem;
-    left: -1rem;
+    left: -19px;
     margin: 0px 0px;
     font-size: larger;
 }
