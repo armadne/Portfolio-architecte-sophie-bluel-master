@@ -364,6 +364,14 @@ if (addPhotoForm) {
 }
 
 
+const backToGalleryBtn = document.getElementById("back-to-gallery");
+
+backToGalleryBtn?.addEventListener("click", () => {
+  modalViewAdd?.classList.add("hidden");
+  modalViewGallery?.classList.remove("hidden");
+});
+
+
 
   // Fermer modale en cliquant en dehors
   window.addEventListener("click", e => {

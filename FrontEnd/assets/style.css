@@ -660,3 +660,30 @@ button.active {
   color: white;
   font-size: 18px; /* ajuste la taille de l’icône */
 }
+
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #000;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+#modal-view-add {
+  position: relative;
+  padding-top: 2rem;
+}
+
+.back-btn {
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    margin: 0px 0px;
+    font-size: larger;
+}
+
