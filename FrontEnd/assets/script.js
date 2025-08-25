@@ -459,7 +459,7 @@ if (addPhotoForm) {
         display.appendChild(info);
 
         // Fermer la modale
-        modal.classList.add("hidden");
+        
         modalViewAdd.classList.add("hidden");
         modalViewGallery.classList.remove("hidden");
       } else {
