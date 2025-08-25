@@ -516,10 +516,7 @@ font-weight: 700;
   color: #666;
 }
 
-#photo-preview {
-  max-width: 100%;
-  margin-top: 10px;
-}
+
 
 .hidden {
   display: none;
@@ -581,14 +578,7 @@ button.active {
   cursor: pointer;
 }
 
-/*
-.upload-placeholder
 
-{
-  width: 450px;
-  height: 200px;
-  border: 2px solid black;
-}*/
 
 
 #remove-photo {
